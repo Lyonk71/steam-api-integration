@@ -57,10 +57,20 @@ func (s *Server) FinalizeTxn() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		c.Header("Content-Type", "application/json")
 
-		// TODO: build out this function
-		response := map[string]string{
-			"status": "success",
-			"data":   "wooo",
+		var finalizeTxn api.FinalizeTxnRequest
+		err := c.ShouldBind(&finalizeTxn)
+		if err != nil {
+			log.Printf("handler error: %v", err)
+			c.JSON(http.StatusBadRequest, nil)
+			return
+		}
+
+		// kday todo: validate finalizeTxn params
+		response, err := s.steamService.FinalizeTxn(finalizeTxn)
+		if err != nil {
+			log.Printf("service error: %v", err)
+			c.JSON(http.StatusInternalServerError, nil)
+			return
 		}
 
 		c.JSON(http.StatusOK, response)
