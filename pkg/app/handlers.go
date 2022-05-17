@@ -35,15 +35,15 @@ func (s *Server) InitTxn() gin.HandlerFunc {
 			return
 		}
 
+		// kday todo: validate initTxn params
 		err = s.steamService.InitTxn(initTxn)
-
 		if err != nil {
 			log.Printf("service error: %v", err)
 			c.JSON(http.StatusInternalServerError, nil)
 			return
 		}
 
-		// TODO: replace this
+		// kday todo: replace this
 		response := map[string]string{
 			"status": "success",
 			"data":   "we did something",

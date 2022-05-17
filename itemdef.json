@@ -1,0 +1,16 @@
+[
+    {
+      "itemID": 1,
+      "price": "100USD",
+      "description": "A small bundle of coins",
+      "category": "Points",
+      "gameValue": 100
+    },
+    {
+      "itemID": 2,
+      "price": "100000USD",
+      "description": "A large bundle of coins",
+      "category": "Points",
+      "gameValue": 10000
+    }
+  ]

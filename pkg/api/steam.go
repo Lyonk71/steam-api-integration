@@ -7,42 +7,36 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-	"net/url"
 )
 
 type SteamService interface {
 	InitTxn(initTxn InitTxnRequest) error
+	GetUserInfo(initTxn InitTxnRequest) error
 	FinalizeTxn(finalizeTxn FinalizeTxnRequest) error
 }
 
 type steamService struct {
-	Config *util.Config
+	Config  *util.Config
+	ItemDef util.Items
 }
 
-func NewSteamService(config *util.Config) SteamService {
+func NewSteamService(config *util.Config, items util.Items) SteamService {
 	return &steamService{
-		Config: config,
+		Config:  config,
+		ItemDef: items,
 	}
 }
 
 func (s *steamService) InitTxn(initTxn InitTxnRequest) error {
-	// kday TODO: redo all this to be flexible and dynamic
-	postBody := url.Values{}
-	postBody.Set("key", s.Config.APIKey)
-	postBody.Set("orderid", initTxn.OrderID)
-	postBody.Set("steamid", initTxn.SteamAccountID)
-	postBody.Set("appid", s.Config.SteamAppID)
-	postBody.Set("itemcount", "1")
-	postBody.Set("currency", "USD")
-	postBody.Set("language", "en")
-	postBody.Set("usersession", "client")
-	postBody.Set("itemid[0]", initTxn.ItemID)
-	postBody.Set("qty[0]", "1")
-	postBody.Set("amount[0]", "100USD")
-	postBody.Set("description[0]", "Some Spellcraft Points")
-	postBody.Set("category[0]", "Points")
+	// Start by looking up the item def based on the itemid passed into the request
+	//items := s.ItemDef.
 
-	resp, err := http.PostForm("https://partner.steam-api.com/ISteamMicroTxnSandbox/InitTxn/v3", postBody)
+	item := s.ItemDef[initTxn.ItemID]
+
+	url := fmt.Sprintf("%s%s/InitTxn/v3", s.Config.SteamAPIUrl, s.Config.SteamInterface)
+	resp, err := http.PostForm(
+		url,
+		initTxn.ToPostBody(s.Config, item))
 	// Handle Error
 	if err != nil {
 		log.Printf("An Error Occurred %v", err)
@@ -65,6 +59,10 @@ func (s *steamService) InitTxn(initTxn InitTxnRequest) error {
 	sb := string(body)
 	fmt.Print(sb)
 
+	return nil
+}
+
+func (s *steamService) GetUserInfo(initTxn InitTxnRequest) error {
 	return nil
 }
 

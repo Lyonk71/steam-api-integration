@@ -26,12 +26,17 @@ func run() error {
 		log.Fatal("cannot load config:", err)
 	}
 
+	itemDef, err := util.LoadItemDef("./itemdef.json")
+	if err != nil {
+		log.Fatal("cannot load items:", err)
+	}
+
 	// create router dependency
 	router := gin.Default()
 	router.Use(cors.Default())
 
 	// create steam service
-	steamService := api.NewSteamService(&config)
+	steamService := api.NewSteamService(&config, itemDef)
 
 	server := app.NewServer(router, steamService)
 

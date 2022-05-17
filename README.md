@@ -28,5 +28,5 @@ curl -X POST \
   http://localhost:8090/v1/api/microtxn/initTxn \
   -H 'cache-control: no-cache' \
   -H 'content-type: application/x-www-form-urlencoded' \
-  -d 'SteamAccountId=76561198006253851&OrderId=100002&ItemId=1'
+  -d 'SteamAccountID=76561198006253851&OrderID=100002&ItemID=1'
   ```
