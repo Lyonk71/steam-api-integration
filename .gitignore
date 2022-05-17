@@ -1,0 +1,8 @@
+# vs code
+.vscode/*
+
+# build/executables
+bin/*
+
+# The main config file should not be committed
+config.env
