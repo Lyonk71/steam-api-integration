@@ -17,7 +17,6 @@ func LoadConfig() (config Config, err error) {
 	viper.SetConfigName("config") // config file name without extension
 	viper.SetConfigType("env")
 	viper.AddConfigPath(".")
-	//viper.AddConfigPath("../.")    // required for the vs debugger
 	viper.AddConfigPath("./util/") // config file path
 	viper.AutomaticEnv()           // read value ENV variable
 

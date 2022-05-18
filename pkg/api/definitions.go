@@ -6,17 +6,20 @@ import (
 	"strconv"
 )
 
+// InitTxnRequest is the request data from the game client
 type InitTxnRequest struct {
 	SteamAccountID string `json:"SteamAccountID"`
 	OrderID        string `json:"OrderID"`
 	ItemID         int    `json:"ItemID"`
 }
 
+// FinalizeTxnRequest is the request data from the game client
 type FinalizeTxnRequest struct {
 	OrderID string `json:"OrderID"`
 }
 
-//{"response":{"result":"OK","params":{"orderid":"321438899","transid":"4844195756231622061"}}}
+// FinalizeTxnResponse is the object we build when we receive the result from the Steam API
+// Example succesful json response: {"response":{"result":"OK","params":{"orderid":"321438899","transid":"4844195756231622061"}}}
 type FinalizeTxnResponse struct {
 	Response FinalizeTxnResponseResponse `json:"response"`
 }
@@ -31,6 +34,37 @@ type FinalizeTxnResponseParams struct {
 	TransId string `json:"transid"`
 }
 
+// GetUserInfoResponse: Result from steam when calling GetUserInfo
+/*
+{
+    "response": {
+        "result": "OK",
+        "params": {
+            "state": "NY",
+            "country": "US",
+            "currency": "USD",
+            "status": "Trusted"
+        }
+    }
+}
+*/
+type GetUserInfoResponse struct {
+	Response GetUserInfoResponseResponse `json:"response"`
+}
+
+type GetUserInfoResponseResponse struct {
+	Result string                    `json:"result"`
+	Params GetUserInfoResponseParams `json:"params"`
+}
+
+type GetUserInfoResponseParams struct {
+	State    string `json:"state"`
+	Country  string `json:"country"`
+	Currency string `json:"currency"`
+	Status   string `json:"status"`
+}
+
+// ToPostBody for InitTxnRequest is the Steam API request params
 func (t *InitTxnRequest) ToPostBody(config *util.Config, item util.Item) url.Values {
 	postBody := url.Values{}
 	postBody.Set("key", config.APIKey)
@@ -49,6 +83,7 @@ func (t *InitTxnRequest) ToPostBody(config *util.Config, item util.Item) url.Val
 	return postBody
 }
 
+// ToPostBody for FinalizeTxnRequest is the Steam API request params
 func (t *FinalizeTxnRequest) ToPostBody(config *util.Config) url.Values {
 	postBody := url.Values{}
 	postBody.Set("key", config.APIKey)
