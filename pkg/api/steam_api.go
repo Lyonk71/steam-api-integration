@@ -10,14 +10,14 @@ import (
 	"net/url"
 )
 
-// InitTxn initializes a transaction with Steam
+// SteamInitTxn initializes a transaction with Steam
 // Steam API Url: POST https://partner.steam-api.com/ISteamMicroTxn/InitTxn/v3/
 // https://partner.steamgames.com/doc/webapi/ISteamMicroTxn#InitTxn
-func SteamInitTxn(c *util.Config, v url.Values) (string, error) {
+func SteamInitTxn(c *util.Config, v url.Values) (*InitTxnResponse, error) {
 	url := fmt.Sprintf("%s%s/InitTxn/v3", c.SteamAPIUrl, c.SteamInterface)
 	resp, err := http.PostForm(url, v)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
 	defer func() {
@@ -30,11 +30,54 @@ func SteamInitTxn(c *util.Config, v url.Values) (string, error) {
 	// Read the response body
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
-	sb := string(body)
-	return sb, nil
+	var initTxnResponse = new(InitTxnResponse)
+	err = json.Unmarshal(body, &initTxnResponse)
+	if err != nil {
+		return nil, err
+	}
+
+	return initTxnResponse, nil
+}
+
+// SteamCheckAppOwnership makes sure that the player owns the game
+// Steam API Url: GET https://partner.steam-api.com/ISteamUser/CheckAppOwnership/v2/
+// https://partner.steamgames.com/doc/webapi/ISteamUser#CheckAppOwnership
+func SteamCheckAppOwnership(c *util.Config, steamID string) (*CheckAppOwnershipResponse, error) {
+
+	payload := url.Values{}
+	payload.Add("key", c.APIKey)
+	payload.Add("appid", c.SteamAppID)
+	payload.Add("steamid", steamID)
+
+	url := fmt.Sprintf("%s%s/CheckAppOwnership/v2", c.SteamAPIUrl, "ISteamUser")
+	resp, err := http.Get(url + "?" + payload.Encode())
+	if err != nil {
+		return nil, err
+	}
+
+	defer func() {
+		err := resp.Body.Close()
+		if err != nil {
+			fmt.Print(err)
+		}
+	}()
+
+	// Read the response body
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	var getCheckAppOwnershipResponse = new(CheckAppOwnershipResponse)
+	err = json.Unmarshal(body, &getCheckAppOwnershipResponse)
+	if err != nil {
+		return nil, err
+	}
+
+	return getCheckAppOwnershipResponse, nil
 }
 
 // GetUserInfo fetches the player's info based on their user wallet.
@@ -65,9 +108,6 @@ func SteamGetUserInfo(c *util.Config, steamID string) (*GetUserInfoResponse, err
 	if err != nil {
 		return nil, err
 	}
-
-	sb := string(body)
-	fmt.Print(sb)
 
 	var getUserInfoResponse = new(GetUserInfoResponse)
 	err = json.Unmarshal(body, &getUserInfoResponse)
@@ -103,13 +143,10 @@ func SteamFinalizeTxn(c *util.Config, v url.Values) (*FinalizeTxnResponse, error
 
 	// Read the response body
 	body, err := ioutil.ReadAll(resp.Body)
-
 	if err != nil {
 		log.Println(err)
 		return nil, err
 	}
-	sb := string(body)
-	fmt.Print(sb)
 
 	var finalizeTxnResponse = new(FinalizeTxnResponse)
 	err = json.Unmarshal(body, &finalizeTxnResponse)

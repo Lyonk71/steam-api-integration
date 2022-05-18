@@ -4,6 +4,7 @@ import (
 	"SteamPurchaseService/util"
 	"net/url"
 	"strconv"
+	"time"
 )
 
 // InitTxnRequest is the request data from the game client
@@ -13,25 +14,77 @@ type InitTxnRequest struct {
 	ItemID         int    `json:"ItemID"`
 }
 
+// InitTxnResponse: Result from steam when calling GetUserInfo
+/*
+{
+  "response": {
+    "result": "OK",
+    "params": {
+      "orderid": "321438899",
+      "transid": "4844195756231622061"
+      "steamurl": ""
+      "agreements": ""
+    }
+  }
+}
+*/
+type InitTxnResponse struct {
+	Response InitTxnResponseResponse `json:"response"`
+}
+
+type InitTxnResponseResponse struct {
+	Result string                 `json:"result"`
+	Params *InitTxnResponseParams `json:"params"`
+	Error  *InitTxnResponseError  `json:"error"`
+}
+
+type InitTxnResponseParams struct {
+	OrderId    string  `json:"orderid"`
+	TransId    string  `json:"transid"`
+	SteamURL   *string `json:"steamurl"`
+	Agreements *string `json:"agreements"`
+}
+
+type InitTxnResponseError struct {
+	ErrorCode string `json:"errorcode"`
+	ErrorDesc string `json:"errordesc"`
+}
+
 // FinalizeTxnRequest is the request data from the game client
 type FinalizeTxnRequest struct {
 	OrderID string `json:"OrderID"`
 }
 
 // FinalizeTxnResponse is the object we build when we receive the result from the Steam API
-// Example succesful json response: {"response":{"result":"OK","params":{"orderid":"321438899","transid":"4844195756231622061"}}}
+/*
+{
+  "response": {
+    "result": "OK",
+    "params": {
+      "orderid": "321438899",
+      "transid": "4844195756231622061"
+    }
+  }
+}
+*/
 type FinalizeTxnResponse struct {
 	Response FinalizeTxnResponseResponse `json:"response"`
 }
 
 type FinalizeTxnResponseResponse struct {
-	Result string                    `json:"result"`
-	Params FinalizeTxnResponseParams `json:"params"`
+	Result string                     `json:"result"`
+	Params *FinalizeTxnResponseParams `json:"params"`
+	Error  *FinalizeTxnResponseError  `json:"error"`
 }
 
 type FinalizeTxnResponseParams struct {
 	OrderId string `json:"orderid"`
 	TransId string `json:"transid"`
+}
+
+type FinalizeTxnResponseError struct {
+	ErrorCode string `json:"errorcode"`
+	ErrorDesc string `json:"errordesc"`
 }
 
 // GetUserInfoResponse: Result from steam when calling GetUserInfo
@@ -53,8 +106,9 @@ type GetUserInfoResponse struct {
 }
 
 type GetUserInfoResponseResponse struct {
-	Result string                    `json:"result"`
-	Params GetUserInfoResponseParams `json:"params"`
+	Result string                     `json:"result"`
+	Params *GetUserInfoResponseParams `json:"params"`
+	Error  *GetUserInfoResponseError  `json:"error"`
 }
 
 type GetUserInfoResponseParams struct {
@@ -62,6 +116,39 @@ type GetUserInfoResponseParams struct {
 	Country  string `json:"country"`
 	Currency string `json:"currency"`
 	Status   string `json:"status"`
+}
+
+type GetUserInfoResponseError struct {
+	ErrorCode string `json:"errorcode"`
+	ErrorDesc string `json:"errordesc"`
+}
+
+// CheckAppOwnershipResponse: Result from steam when calling CheckAppOwnership
+/*
+{
+    "appownership": {
+        "ownsapp": true,
+        "permanent": false,
+        "timestamp": "2022-05-18T01:35:07Z",
+        "ownersteamid": "76561198006253851",
+        "sitelicense": false,
+        "timedtrial": false,
+        "result": "OK"
+    }
+}
+*/
+type CheckAppOwnershipResponse struct {
+	AppOwnership GetUserInfoResponseAppOwnership `json:"appownership"`
+}
+
+type GetUserInfoResponseAppOwnership struct {
+	OwnsApp      bool      `json:"ownsapp"`
+	Permanent    bool      `json:"permanent"`
+	Timestamp    time.Time `json:"timestamp"`
+	OwnerSteamId string    `json:"ownersteamid"`
+	SiteLicense  bool      `json:"sitelicense"`
+	TimedTrial   bool      `json:"timedtrial"`
+	Result       string    `json:"result"`
 }
 
 // ToPostBody for InitTxnRequest is the Steam API request params
