@@ -34,4 +34,4 @@ curl -X POST \
 
 # Steam Microtransaction Flow 
 
-![Steam Microtransaction Flow ](./docs/steam-microtxn-flow.png.png?raw=true)
+![Steam Microtransaction Flow ](https://github.com/Rushdown-Studios/steam-api-integration/blob/main/docs/steam-microtxn-flow.png?raw=true)
