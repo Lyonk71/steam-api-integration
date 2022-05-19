@@ -30,3 +30,8 @@ curl -X POST \
   -H 'content-type: application/x-www-form-urlencoded' \
   -d 'SteamAccountID=76561198006253851&OrderID=100002&ItemID=1'
   ```
+
+
+# Steam Microtransaction Flow 
+
+![Steam Microtransaction Flow ](./docs/steam-microtxn-flow.png.png?raw=true)
