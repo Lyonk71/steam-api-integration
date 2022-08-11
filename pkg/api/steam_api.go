@@ -74,6 +74,7 @@ func SteamCheckAppOwnership(c *util.Config, steamID string) (*CheckAppOwnershipR
 	var getCheckAppOwnershipResponse = new(CheckAppOwnershipResponse)
 	err = json.Unmarshal(body, &getCheckAppOwnershipResponse)
 	if err != nil {
+		log.Printf("You are not listed as the publisher of this app.")
 		return nil, err
 	}
 
