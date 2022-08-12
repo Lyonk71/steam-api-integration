@@ -23,14 +23,19 @@ Create a new `config.env` file that matches `config.env.sample` and replace the 
 `make run`
 
 ### Hit the service
+#### Initiate a microtransaction
 ```
 curl -X POST \
   http://localhost:8090/v1/api/microtxn/initTxn \
   -H 'cache-control: no-cache' \
   -H 'content-type: application/x-www-form-urlencoded' \
   -d 'SteamAccountID=76561198006253851&OrderID=100002&ItemID=1'
-  ```
+```
 
+#### List all friends for a given user
+```
+curl "http://localhost:8090/v1/api/steamuser/getfriendlist?steamid=76561198351398889&relationship=friend" 
+```
 
 # Steam Microtransaction Flow 
 

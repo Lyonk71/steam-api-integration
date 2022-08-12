@@ -151,6 +151,40 @@ type GetUserInfoResponseAppOwnership struct {
 	Result       string    `json:"result"`
 }
 
+// GetFriendListRequest are the GET parameters from the game client
+type GetFriendListRequest struct {
+	SteamAccountID string
+	Relationship   string
+}
+
+// GetFriendListResponse: Result from steam when calling GetFriendList
+// {
+//   "friendslist": {
+//     "friends": [
+//       {
+//         "steamid": "76561198011299661",
+//         "relationship": "friend",
+//         "friend_since": 1659647050
+//       },
+//       {
+//         "steamid": "76561198023166775",
+//         "relationship": "friend",
+//         "friend_since": 1659647051
+//       }
+//     ]
+//   }
+// }
+
+type GetFriendListResponse struct {
+	FriendsList struct {
+		Friends []struct {
+			SteamID      string `json:"steamid"`
+			Relationship string `json:"relationship"`
+			FriendSince  int    `json:"friend_since"`
+		} `json:"friends"`
+	} `json:"friendslist"`
+}
+
 // ToPostBody for InitTxnRequest is the Steam API request params
 func (t *InitTxnRequest) ToPostBody(config *util.Config, item util.Item) url.Values {
 	postBody := url.Values{}
@@ -177,4 +211,13 @@ func (t *FinalizeTxnRequest) ToPostBody(config *util.Config) url.Values {
 	postBody.Set("orderid", t.OrderID)
 	postBody.Set("appid", config.SteamAppID)
 	return postBody
+}
+
+// ToURLQuery for GetFriendListRequest is the Steam API request params
+func (t *GetFriendListRequest) ToURLQuery(config *util.Config) url.Values {
+	queryParams := url.Values{}
+	queryParams.Set("key", config.APIKey)
+	queryParams.Set("steamid", t.SteamAccountID)
+	queryParams.Set("relationship", t.Relationship)
+	return queryParams
 }

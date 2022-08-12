@@ -9,6 +9,7 @@ import (
 type SteamService interface {
 	InitTxn(initTxn InitTxnRequest) (*InitTxnResponse, error)
 	FinalizeTxn(finalizeTxn FinalizeTxnRequest) (*FinalizeTxnResponse, error)
+	GetFriendList(getFriendList GetFriendListRequest) (*GetFriendListResponse, error)
 }
 
 type steamService struct {
@@ -67,6 +68,16 @@ func (s *steamService) InitTxn(initTxn InitTxnRequest) (*InitTxnResponse, error)
 
 func (s *steamService) FinalizeTxn(finalizeTxn FinalizeTxnRequest) (*FinalizeTxnResponse, error) {
 	resp, err := SteamFinalizeTxn(s.Config, finalizeTxn.ToPostBody(s.Config))
+	if err != nil {
+		fmt.Print(err)
+		return nil, err
+	}
+
+	return resp, nil
+}
+
+func (s *steamService) GetFriendList(getFriendList GetFriendListRequest) (*GetFriendListResponse, error) {
+	resp, err := SteamGetFriendList(s.Config, getFriendList.ToURLQuery(s.Config))
 	if err != nil {
 		fmt.Print(err)
 		return nil, err

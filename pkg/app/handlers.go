@@ -70,3 +70,22 @@ func (s *Server) FinalizeTxn() gin.HandlerFunc {
 		c.JSON(http.StatusOK, response)
 	}
 }
+
+func (s *Server) GetFriendList() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		c.Header("Content-Type", "application/json")
+		steamID := c.Query("steamid")
+		relationship := c.Query("relationship")
+
+		getFriendList := api.GetFriendListRequest{SteamAccountID: steamID, Relationship: relationship}
+
+		response, err := s.steamService.GetFriendList(getFriendList)
+		if err != nil {
+			log.Printf("service error: %v", err)
+			c.JSON(http.StatusInternalServerError, nil)
+			return
+		}
+
+		c.JSON(http.StatusOK, response)
+	}
+}

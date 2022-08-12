@@ -15,6 +15,10 @@ func (s *Server) Routes() *gin.Engine {
 			microtxn.POST("initTxn", s.InitTxn())
 			microtxn.POST("finalizeTxn", s.FinalizeTxn())
 		}
+		steamuser := v1.Group("/steamuser")
+		{
+			steamuser.GET("getfriendlist", s.GetFriendList())
+		}
 	}
 
 	return router

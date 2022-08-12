@@ -156,3 +156,37 @@ func SteamFinalizeTxn(c *util.Config, v url.Values) (*FinalizeTxnResponse, error
 
 	return finalizeTxnResponse, nil
 }
+
+// SteamGetFriendList initializes a transaction with Steam
+// Steam API Url: GET https://partner.steam-api.com/ISteamUser/GetFriendList/v1/
+// https://partner.steamgames.com/doc/webapi/ISteamUser#GetFriendList
+func SteamGetFriendList(c *util.Config, v url.Values) (*GetFriendListResponse, error) {
+	payload := v
+
+	url := fmt.Sprintf("%s%s/GetFriendList/v1", c.SteamAPIUrl, "ISteamUser")
+	resp, err := http.Get(url + "?" + payload.Encode())
+	if err != nil {
+		return nil, err
+	}
+
+	defer func() {
+		err := resp.Body.Close()
+		if err != nil {
+			fmt.Print(err)
+		}
+	}()
+
+	// Read the response body
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	var getUserInfoResponse = new(GetFriendListResponse)
+	err = json.Unmarshal(body, &getUserInfoResponse)
+	if err != nil {
+		return nil, err
+	}
+
+	return getUserInfoResponse, nil
+}
